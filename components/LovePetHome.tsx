@@ -377,6 +377,7 @@ export default function LovePetHome() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [motionKey, setMotionKey] = useState(0);
   const [activeCoat, setActiveCoat] = useState<string | null>(null);
+  const coatsMediaRef = useRef<HTMLDivElement | null>(null);
 
   const fmReduced = useReducedMotion() ?? false;
 
@@ -939,7 +940,7 @@ export default function LovePetHome() {
         <section className="lp-section lp-coats" id="cuccioli" aria-labelledby="lp-coats-title">
           <div className="lp-shell">
             <div className="lp-coats__intro" data-reveal-group>
-              <div className="lp-coats__media" data-reveal="up">
+              <div className="lp-coats__media" data-reveal="up" ref={coatsMediaRef}>
                 <div className="lp-frame-ring" aria-hidden="true" />
                 <div className="lp-frame lp-frame--arch">
                   {activeCoat ? (
@@ -1018,7 +1019,18 @@ export default function LovePetHome() {
                       type="button"
                       className="lp-coat__btn"
                       aria-pressed={isActive}
-                      onClick={() => setActiveCoat(isActive ? null : coat.name)}
+                      onClick={() => {
+                        const next = isActive ? null : coat.name;
+                        setActiveCoat(next);
+                        // Su schermi piccoli l'immagine grande sta sopra le card:
+                        // scrolla per farla vedere dopo la selezione.
+                        if (next && coatsMediaRef.current && window.matchMedia("(max-width: 720px)").matches) {
+                          coatsMediaRef.current.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center",
+                          });
+                        }
+                      }}
                     >
                       <span
                         className="lp-coat__swatch"
