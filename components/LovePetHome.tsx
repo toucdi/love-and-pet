@@ -1024,11 +1024,19 @@ export default function LovePetHome() {
                         setActiveCoat(next);
                         // Su schermi piccoli l'immagine grande sta sopra le card:
                         // scrolla per farla vedere dopo la selezione.
-                        if (next && coatsMediaRef.current && window.matchMedia("(max-width: 720px)").matches) {
-                          coatsMediaRef.current.scrollIntoView({
-                            behavior: "smooth",
-                            block: "center",
-                          });
+                        // NB: passa da Lenis quando attivo, perché lo smooth scroll
+                        // intercetta lo scroll nativo e scrollIntoView a volte salta.
+                        const media = coatsMediaRef.current;
+                        if (next && media && window.matchMedia("(max-width: 720px)").matches) {
+                          const lenis = lenisRef.current;
+                          if (lenis) {
+                            lenis.scrollTo(media, {
+                              offset: -76,
+                              duration: 1.1,
+                            });
+                          } else {
+                            media.scrollIntoView({ behavior: "smooth", block: "center" });
+                          }
                         }
                       }}
                     >
