@@ -36,8 +36,17 @@ const BUSINESS = {
 const IMG = {
   hero: "https://v3b.fal.media/files/b/0aa7c496/r3wEt_6WzBulUW9vHNWG1_jrUrNRjT.png",
   duo: "https://v3b.fal.media/files/b/0aa7c4ad/l65SEI5HMvlOdcsOl8OCZ_PiYXSw0k.png",
-  spa: "https://v3b.fal.media/files/b/0aa7c49a/u9Ng4sfsv8aApAF4EXopG_w4uKIv4H.png",
+  spa: "https://v3b.fal.media/files/b/0aa7c58a/IArDSCLA_-TQAwqTpsTMH_GHYlL74u.png",
   mesh: "https://v3b.fal.media/files/b/0aa7c49b/jYXftxwdoSSnHhBk-ON-S_knxavIgo.png",
+  manuela: "/images/manuela.jpg",
+} as const;
+
+const COAT_IMAGES = {
+  Albicocca: "https://v3b.fal.media/files/b/0aa7c575/ZW_WxhZ8rrXsPlfazwhKc_1M698UKt.png",
+  Rosso: "https://v3b.fal.media/files/b/0aa7c58c/stmS6GyI3izhJ34EdQ4cg_zcyU4ZW0.png",
+  Nero: "https://v3b.fal.media/files/b/0aa7c579/HEpCdIU427CZUd_c-Zaza_InlfMTni.png",
+  Bianco: "https://v3b.fal.media/files/b/0aa7c57b/WXZW7DEjDw6aZ2f0RDN8p_8ey3W0vD.png",
+  Champagne: "https://v3b.fal.media/files/b/0aa7c586/3BGEFr13aTUxiNA_4C-Xs_AHq9QRJo.png",
 } as const;
 
 const NAV = [
@@ -166,18 +175,21 @@ const QUOTES = [
     name: "Giulia R.",
     city: "Roma",
     initials: "GR",
+    photo: "https://v3b.fal.media/files/b/0aa7c58c/mcGCr6khStSC3DWLuD6t__mCPYCTxx.png",
   },
   {
     text: "Manuela ci ha seguiti passo passo, prima e dopo l'adozione. Una professionalità rara, e una disponibilità che oggi non trovi quasi più.",
     name: "Marco T.",
     city: "Ciampino",
     initials: "MT",
+    photo: "https://v3b.fal.media/files/b/0aa7c58f/rrebKS7bTnnq0OXN_vTzy_0kY74tgr.png",
   },
   {
     text: "Porto Otto in toelettatura ogni mese. Esce profumato, pettinato e felice — e credo che questo dica tutto sul posto in cui l'ho lasciato.",
     name: "Federica P.",
     city: "Pomezia",
     initials: "FP",
+    photo: "https://v3b.fal.media/files/b/0aa7c591/sm2TzsggdRqstl6IJ1S5g_Jprd8c7x.png",
   },
 ];
 
@@ -861,7 +873,6 @@ export default function LovePetHome() {
             </div>
 
             <div className="lp-hero__media" data-parallax="media" data-reveal="hero">
-              <div className="lp-hero__ring" aria-hidden="true" />
               <div className="lp-frame lp-frame--hero">
                 <img
                   src={IMG.hero}
@@ -880,8 +891,15 @@ export default function LovePetHome() {
               </span>
 
               <div className="lp-hero__card lp-glass">
-                <span className="lp-hero__card-mark" aria-hidden="true">
-                  <PawIcon />
+                <span className="lp-hero__card-photo" aria-hidden="true">
+                  <img
+                    src={IMG.manuela}
+                    alt=""
+                    width={96}
+                    height={96}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </span>
                 <span>
                   <b>{BUSINESS.owner}</b>
@@ -972,7 +990,7 @@ export default function LovePetHome() {
               </div>
             </div>
 
-            <ul className="lp-coats__grid" data-reveal-group>
+            <ul className="lp-coats__grid" data-reveal-group role="tablist" aria-label="Mantelli disponibili">
               {COATS.map((coat) => (
                 <li
                   className="lp-coat lp-spot"
@@ -980,14 +998,31 @@ export default function LovePetHome() {
                   data-reveal="up"
                   onPointerMove={onSpotMove}
                 >
-                  <span
-                    className="lp-coat__swatch"
-                    aria-hidden="true"
-                    style={{ background: coat.swatch }}
-                  />
-                  <span className="lp-coat__name">{coat.name}</span>
-                  <span className="lp-coat__note">{coat.note}</span>
-                  <span className="lp-coat__tag">Toy · Nano</span>
+                  <button
+                    type="button"
+                    className="lp-coat__btn"
+                    data-coat={coat.name}
+                    aria-label={`Mostra il mantello ${coat.name}`}
+                  >
+                    <span className="lp-coat__photo" aria-hidden="true">
+                      <img
+                        src={COAT_IMAGES[coat.name as keyof typeof COAT_IMAGES]}
+                        alt=""
+                        width={176}
+                        height={176}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </span>
+                    <span
+                      className="lp-coat__swatch"
+                      aria-hidden="true"
+                      style={{ background: coat.swatch }}
+                    />
+                    <span className="lp-coat__name">{coat.name}</span>
+                    <span className="lp-coat__note">{coat.note}</span>
+                    <span className="lp-coat__tag">Toy · Nano</span>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -1193,7 +1228,14 @@ export default function LovePetHome() {
                   <blockquote className="lp-quote__text">{quote.text}</blockquote>
                   <div className="lp-quote__who">
                     <span className="lp-quote__avatar" aria-hidden="true">
-                      {quote.initials}
+                      <img
+                        src={quote.photo}
+                        alt=""
+                        width={88}
+                        height={88}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     </span>
                     <span>
                       <b>{quote.name}</b>
