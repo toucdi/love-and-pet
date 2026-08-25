@@ -36,7 +36,7 @@ const BUSINESS = {
 const IMG = {
   hero: "https://v3b.fal.media/files/b/0aa7c496/r3wEt_6WzBulUW9vHNWG1_jrUrNRjT.png",
   duo: "https://v3b.fal.media/files/b/0aa7c4ad/l65SEI5HMvlOdcsOl8OCZ_PiYXSw0k.png",
-  spa: "https://v3b.fal.media/files/b/0aa7c58a/IArDSCLA_-TQAwqTpsTMH_GHYlL74u.png",
+  spa: "https://v3b.fal.media/files/b/0aa7c5ee/jGZ2G9YGHdYGGb-Ua6qvx_jNSd8cid.png",
   mesh: "https://v3b.fal.media/files/b/0aa7c49b/jYXftxwdoSSnHhBk-ON-S_knxavIgo.png",
   manuela: "/images/manuela.jpg",
 } as const;
@@ -376,6 +376,7 @@ export default function LovePetHome() {
   const [solidHeader, setSolidHeader] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [motionKey, setMotionKey] = useState(0);
+  const [activeCoat, setActiveCoat] = useState<string | null>(null);
 
   const fmReduced = useReducedMotion() ?? false;
 
@@ -941,18 +942,31 @@ export default function LovePetHome() {
               <div className="lp-coats__media" data-reveal="up">
                 <div className="lp-frame-ring" aria-hidden="true" />
                 <div className="lp-frame lp-frame--arch">
-                  <img
-                    src={IMG.duo}
-                    alt="Due Barboncini Toy adulti seduti vicini: uno con mantello nero lucido, uno con mantello bianco"
-                    width={1152}
-                    height={2048}
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  {activeCoat ? (
+                    <img
+                      key={activeCoat}
+                      src={COAT_IMAGES[activeCoat as keyof typeof COAT_IMAGES]}
+                      alt={`Barboncino Toy con mantello ${activeCoat}`}
+                      width={1024}
+                      height={1024}
+                      loading="lazy"
+                      decoding="async"
+                      className="lp-coats__swap"
+                    />
+                  ) : (
+                    <img
+                      src={IMG.duo}
+                      alt="Due Barboncini Toy adulti seduti vicini: uno con mantello nero lucido, uno con mantello bianco"
+                      width={1152}
+                      height={2048}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )}
                 </div>
                 <span className="lp-coats__badge">
-                  <b>ENC/FCI</b>
-                  <span>Pedigree incluso</span>
+                  <b>{activeCoat ?? "ENC/FCI"}</b>
+                  <span>{activeCoat ? `Mantello ${activeCoat}` : "Pedigree incluso"}</span>
                 </span>
               </div>
 
@@ -990,41 +1004,36 @@ export default function LovePetHome() {
               </div>
             </div>
 
-            <ul className="lp-coats__grid" data-reveal-group role="tablist" aria-label="Mantelli disponibili">
-              {COATS.map((coat) => (
-                <li
-                  className="lp-coat lp-spot"
-                  key={coat.name}
-                  data-reveal="up"
-                  onPointerMove={onSpotMove}
-                >
-                  <button
-                    type="button"
-                    className="lp-coat__btn"
-                    data-coat={coat.name}
-                    aria-label={`Mostra il mantello ${coat.name}`}
+            <ul className="lp-coats__grid" data-reveal-group aria-label="Mantelli disponibili">
+              {COATS.map((coat) => {
+                const isActive = activeCoat === coat.name;
+                return (
+                  <li
+                    className={`lp-coat lp-spot${isActive ? " is-active" : ""}`}
+                    key={coat.name}
+                    data-reveal="up"
+                    onPointerMove={onSpotMove}
                   >
-                    <span className="lp-coat__photo" aria-hidden="true">
-                      <img
-                        src={COAT_IMAGES[coat.name as keyof typeof COAT_IMAGES]}
-                        alt=""
-                        width={176}
-                        height={176}
-                        loading="lazy"
-                        decoding="async"
+                    <button
+                      type="button"
+                      className="lp-coat__btn"
+                      aria-pressed={isActive}
+                      onClick={() => setActiveCoat(isActive ? null : coat.name)}
+                    >
+                      <span
+                        className="lp-coat__swatch"
+                        aria-hidden="true"
+                        style={{ background: coat.swatch }}
                       />
-                    </span>
-                    <span
-                      className="lp-coat__swatch"
-                      aria-hidden="true"
-                      style={{ background: coat.swatch }}
-                    />
-                    <span className="lp-coat__name">{coat.name}</span>
-                    <span className="lp-coat__note">{coat.note}</span>
-                    <span className="lp-coat__tag">Toy · Nano</span>
-                  </button>
-                </li>
-              ))}
+                      <span className="lp-coat__name">{coat.name}</span>
+                      <span className="lp-coat__note">{coat.note}</span>
+                      <span className="lp-coat__tag">
+                        {isActive ? "✓ Selezionato · ripremi per tornare" : "Clicca per vedere"}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </section>
